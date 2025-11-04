@@ -10,7 +10,7 @@ export const signup = async(req, res) =>{
         if(existEmail){
             return res.status(400).json({message: "Email Already Registered"});
         }
-        if(password.length > 5){
+        if(!(password.length >= 6)){
             return res.status(400).json({message: "password must be atleast 6 characters"})
         }
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -19,14 +19,14 @@ export const signup = async(req, res) =>{
             password: hashedPassword,
             email
         })
-        const token = tokenGeneration(user._id);
+        const token = await tokenGeneration(user._id);
         res.cookie("token", token, {
             httpOnly: true,
             maxAge: 7*24*60*60*1000,
             sameSite: "strict",
             secure: false
         });
-        return res.status(201).json(user);
+        return res.status(201).json({user, token});
     } catch (error) {
         return res.status(500).json({message: `signup error ${error}`})
     }
@@ -40,21 +40,21 @@ export const login = async(req, res) =>{
         if(!user){
             return res.status(400).json({message: "Email Not Exist! signup now"});
         }
-        if(password.length > 5){
+        if(!(password.length >= 6)){
             return res.status(400).json({message: "password must be atleast 6 characters"})
         }
         const isMatched = await bcrypt.compare(password, user.password);
         if(!isMatched){
             return res.status(500).json({message: `invalid email or password`});
         }
-        const token = tokenGeneration(user._id);
+        const token = await tokenGeneration(user._id);
         res.cookie("token", token, {
             httpOnly: true,
             maxAge: 7*24*60*60*1000,
             sameSite: "strict",
             secure: false
         });
-        return res.status(200).json(user);
+        return res.status(200).json({user, token});
     } catch (error) {
         return res.status(500).json({message: `login error ${error}`})
     }
