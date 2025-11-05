@@ -1,0 +1,77 @@
+/* eslint-disable react-refresh/only-export-components */
+
+import { createContext, useState } from "react";
+import axios from 'axios';
+import toast from 'react-hot-toast';
+
+// create context
+export const AuthContext = createContext();
+
+// create provider
+export const AuthProvider = ({ children }) => {
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(false);
+    // eslint-disable-next-line no-unused-vars
+    const [error, setError] = useState(null);
+
+    // 🧩 signup function
+    const signup = async (data) => {
+        try {
+            setLoading(true);
+            setError(null);
+            const res = await axios.post("http://localhost:3000/api/auth/signup", data, {
+                headers: { "Content-Type": "application/json" },
+                withCredentials: true,
+            });
+            setUser(res.data.user);
+            toast.success("Account created successfully!");
+        } catch (err) {
+            const msg = err.response?.data?.message || "Signup failed!"
+            setError(msg);
+            toast.error(msg);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // 🧩 login function
+    const login = async (data) => {
+        try {
+            setLoading(true);
+            setError(null);
+            const res = await axios.post("http://localhost:3000/api/auth/login", data, {
+                headers: { "Content-Type": "application/json" },
+                withCredentials: true,
+            });
+            setUser(res.data.user);
+            toast.success("Logged in successfully!");
+        } catch (err) {
+            const msg = err.response?.data?.message || "Login failed!";
+            setError(msg);
+            toast.error(msg);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // 🧩 logout function
+    const logout = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            await axios.post("http://localhost:3000/api/auth/logout", {}, { withCredentials: true });
+            setUser(null);
+            toast("Logged out");
+        } catch (err) {
+            const msg = err.response?.data?.message || "logout failed!";
+            setError(msg);
+            toast.error(msg);
+        }
+    };
+
+    return (
+        <AuthContext.Provider value={{ user, loading, signup, login, logout }}>
+            {children}
+        </AuthContext.Provider>
+    )
+}

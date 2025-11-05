@@ -1,11 +1,12 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import videoBg from "../../public/parth_bg.mp4";
-import axios from "axios";
+import { AuthContext } from "../context/AuthContext";
 
 const SignUp = () => {
+  const {signup, loading} = useContext(AuthContext);
   const videoRef = useRef(null);
   const [isMuted, setIsMuted] = useState(true);
   const [name, setName] = useState("");
@@ -25,19 +26,9 @@ const SignUp = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    const data = { name, email, password };
-    console.log(data)
-    try {
-      const res = await axios.post("http://localhost:3000/api/auth/signup", data, {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true,
-      })
-      console.log("✅ Signup successful:", res.data);
-      alert("Signup successful!");
-    } catch (err) {
-      console.error("❌ Signup failed:", err.response?.data || err.message);
-      alert("Signup failed! Please try again.");
-    }
+    
+    // serving data from context
+    signup({name, email, password});
 
     // reset form
     setEmail("");
@@ -145,10 +136,11 @@ const SignUp = () => {
 
           {/* Submit Button */}
           <button
+            disabled={loading}
             type="submit"
             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg transition-all duration-200 shadow-md"
           >
-            Sign Up
+            {loading ? "Loading.." : "SignUp"}
           </button>
         </form>
 

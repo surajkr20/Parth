@@ -1,11 +1,12 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import videoBg from "../../public/signin_bg.mp4";
-import axios from "axios";
+import { AuthContext } from "../context/AuthContext.jsx"
 
 const SignIn = () => {
+  const {login, loading} = useContext(AuthContext);
   const videoRef = useRef(null);
   const [isMuted, setIsMuted] = useState(true);
   const [email, setEmail] = useState("");
@@ -24,17 +25,12 @@ const SignIn = () => {
 
   const submitHandler = async(e) => {
     e.preventDefault();
-    const data = {email, password};
-    try {
-      const res = await axios.post("http://localhost:3000/api/auth/login", data, {
-        headers: {"Content-Type": "application/json"},
-        withCredentials: true
-      })
-      console.log("login successfully: ", res.data);
-    } catch (err) {
-      console.error("❌ Sign In failed:", err.response?.data || err.message);
-      alert("Sign In failed! Please try again.");
-    }
+    
+    login({email, password});
+
+    // reset form
+    setEmail("");
+    setPassword("")
   }
 
   return (
@@ -69,7 +65,7 @@ const SignIn = () => {
       </button>
 
       {/* 🪩 Form Container */}
-      <div className="relative z-10 bg-[#0e0e1a]/80 backdrop-blur-lg p-10 rounded-2xl w-full max-w-md shadow-2xl border border-gray-700">
+      <div className="relative z-10 bg-[#0e0e1a]/80 backdrop-blur-lg p-10 rounded-2xl w-[90%] max-w-md shadow-2xl border border-gray-700">
         <h2 className="text-3xl font-bold text-center text-white mb-6 tracking-wide">
           Welcome Back 👋
         </h2>
@@ -111,10 +107,11 @@ const SignIn = () => {
 
           {/* Submit */}
           <button
+            disabled={loading}
             type="submit"
             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg transition duration-200"
           >
-            Sign In
+            {loading ? "Loading..." : "Sign In"}
           </button>
         </form>
 
