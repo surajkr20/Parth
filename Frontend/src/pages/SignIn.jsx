@@ -3,10 +3,13 @@ import { Link } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import videoBg from "../../public/signin_bg.mp4";
+import axios from "axios";
 
 const SignIn = () => {
   const videoRef = useRef(null);
-   const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const toggleSound = () => {
     const video = videoRef.current;
@@ -18,6 +21,21 @@ const SignIn = () => {
       }
     }
   };
+
+  const submitHandler = async(e) => {
+    e.preventDefault();
+    const data = {email, password};
+    try {
+      const res = await axios.post("http://localhost:3000/api/auth/login", data, {
+        headers: {"Content-Type": "application/json"},
+        withCredentials: true
+      })
+      console.log("login successfully: ", res.data);
+    } catch (err) {
+      console.error("❌ Sign In failed:", err.response?.data || err.message);
+      alert("Sign In failed! Please try again.");
+    }
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
@@ -56,19 +74,21 @@ const SignIn = () => {
           Welcome Back 👋
         </h2>
 
-        <form className="space-y-5">
+        <form className="space-y-5" onSubmit={submitHandler}>
           {/* Email */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
               Email address
             </label>
             <input
+              value={email}
               id="email"
               name="email"
               type="email"
               required
               className="block w-full rounded-md bg-white/5 px-3 py-2 text-base text-white outline outline-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:outline-indigo-500 sm:text-sm"
               placeholder="Enter your email"
+              onChange={(e)=>setEmail(e.target.value)}
             />
           </div>
 
@@ -78,12 +98,14 @@ const SignIn = () => {
               Password
             </label>
             <input
+              value={password}
               id="password"
               name="password"
               type="password"
               required
               className="block w-full rounded-md bg-white/5 px-3 py-2 text-base text-white outline outline-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:outline-indigo-500 sm:text-sm"
               placeholder="Enter your password"
+              onChange={(e)=>setPassword(e.target.value)}
             />
           </div>
 

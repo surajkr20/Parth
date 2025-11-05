@@ -3,10 +3,14 @@ import { Link } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import videoBg from "../../public/parth_bg.mp4";
+import axios from "axios";
 
 const SignUp = () => {
   const videoRef = useRef(null);
   const [isMuted, setIsMuted] = useState(true);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const toggleSound = () => {
     const video = videoRef.current;
@@ -18,6 +22,28 @@ const SignUp = () => {
       }
     }
   };
+
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    const data = { name, email, password };
+    console.log(data)
+    try {
+      const res = await axios.post("http://localhost:3000/api/auth/signup", data, {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      })
+      console.log("✅ Signup successful:", res.data);
+      alert("Signup successful!");
+    } catch (err) {
+      console.error("❌ Signup failed:", err.response?.data || err.message);
+      alert("Signup failed! Please try again.");
+    }
+
+    // reset form
+    setEmail("");
+    setName("");
+    setPassword("");
+  }
 
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -31,9 +57,6 @@ const SignUp = () => {
         playsInline
         className="absolute top-0 left-0 w-full h-full object-cover brightness-60 -z-20"
       />
-
-      {/* 🔹 Dark Overlay */}
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] -z-10 pointer-events-none" />
 
       {/* 🔹 Enable Sound Button */}
       <button
@@ -59,7 +82,7 @@ const SignUp = () => {
           Create your account
         </h2>
 
-        <form className="space-y-5">
+        <form className="space-y-5" onSubmit={submitHandler}>
           {/* Full Name */}
           <div>
             <label
@@ -69,12 +92,14 @@ const SignUp = () => {
               Full Name
             </label>
             <input
+              value={name}
               id="name"
               name="name"
               type="text"
               required
               className="w-full rounded-md bg-white/10 px-3 py-2 text-base text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-indigo-500"
               placeholder="Enter your full name"
+              onChange={(e) => setName(e.target.value)}
             />
           </div>
 
@@ -87,12 +112,14 @@ const SignUp = () => {
               Email address
             </label>
             <input
+              value={email}
               id="email"
               name="email"
               type="email"
               required
               className="w-full rounded-md bg-white/10 px-3 py-2 text-base text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-indigo-500"
               placeholder="Enter your email"
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
 
@@ -105,12 +132,14 @@ const SignUp = () => {
               Password
             </label>
             <input
+              value={password}
               id="password"
               name="password"
               type="password"
               required
               className="w-full rounded-md bg-white/10 px-3 py-2 text-base text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-indigo-500"
               placeholder="Create a password"
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
 
