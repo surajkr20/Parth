@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
@@ -11,8 +11,30 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(false);
-    // eslint-disable-next-line no-unused-vars
     const [error, setError] = useState(null);
+
+    const serverUrl = "http://localhost:3000";
+
+    useEffect(() => {
+        const fetchAuthenticatedUser = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+                const response = await axios.get(`${serverUrl}/api/user/me`, {
+                    withCredentials: true,
+                });
+                setUser(response.data);
+                toast.success("Authenticated user fetched successfully");
+            } catch (err) {
+                const msg = err.message || "Fetching authenticated data failed";
+                setError(msg);
+                toast.error(msg);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchAuthenticatedUser();
+    }, []);
 
     // 🧩 signup function
     const signup = async (data) => {
@@ -61,7 +83,7 @@ export const AuthProvider = ({ children }) => {
             setError(null);
             await axios.post("http://localhost:3000/api/auth/logout", {}, { withCredentials: true });
             setUser(null);
-            toast("Logged out");
+            toast.success("Logged out");
         } catch (err) {
             const msg = err.response?.data?.message || "logout failed!";
             setError(msg);
@@ -70,7 +92,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, signup, login, logout }}>
+        <AuthContext.Provider value={{ user, loading, signup, login, logout, error }}>
             {children}
         </AuthContext.Provider>
     )
