@@ -3,6 +3,7 @@
 import { createContext, useEffect, useState } from "react";
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { useNavigate } from "react-router-dom";
 
 // create context
 export const AuthContext = createContext();
@@ -12,6 +13,7 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     const serverUrl = "http://localhost:3000";
 
@@ -24,11 +26,10 @@ export const AuthProvider = ({ children }) => {
                     withCredentials: true,
                 });
                 setUser(response.data);
-                toast.success("Authenticated user fetched successfully");
             } catch (err) {
-                const msg = err.message || "Fetching authenticated data failed";
+                setUser(null);
+                const msg =  err.response?.data?.message || "Fetching authenticated data failed";
                 setError(msg);
-                toast.error(msg);
             } finally {
                 setLoading(false);
             }
@@ -45,9 +46,11 @@ export const AuthProvider = ({ children }) => {
                 headers: { "Content-Type": "application/json" },
                 withCredentials: true,
             });
-            setUser(res.data.user);
+            setUser(res.data?.user);
+            navigate("/customized");
             toast.success("Account created successfully!");
         } catch (err) {
+            setUser(null);
             const msg = err.response?.data?.message || "Signup failed!"
             setError(msg);
             toast.error(msg);
@@ -66,8 +69,10 @@ export const AuthProvider = ({ children }) => {
                 withCredentials: true,
             });
             setUser(res.data.user);
+            navigate("/");
             toast.success("Logged in successfully!");
         } catch (err) {
+            setUser(null);
             const msg = err.response?.data?.message || "Login failed!";
             setError(msg);
             toast.error(msg);
@@ -83,6 +88,7 @@ export const AuthProvider = ({ children }) => {
             setError(null);
             await axios.post("http://localhost:3000/api/auth/logout", {}, { withCredentials: true });
             setUser(null);
+            navigate("/signin")
             toast.success("Logged out");
         } catch (err) {
             const msg = err.response?.data?.message || "logout failed!";
@@ -92,7 +98,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, signup, login, logout, error }}>
+        <AuthContext.Provider value={{ user, loading, signup, login, logout, error, serverUrl }}>
             {children}
         </AuthContext.Provider>
     )
