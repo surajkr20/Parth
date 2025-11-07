@@ -5,6 +5,7 @@ import SignIn from './pages/SignIn';
 import Home from './pages/Home';
 import Customized from './pages/Customized';
 import { AuthContext } from './context/AuthContext';
+import { AsistantName } from './pages/AsistantName';
 
 const App = () => {
   const { user } = useContext(AuthContext)
@@ -15,6 +16,7 @@ const App = () => {
         <Route path='/signup' element={!user ? <SignUp /> : <Navigate to={'/'} />} />
         <Route path='/signin' element={!user ? <SignIn /> : <Navigate to={'/'} />} />
         <Route path='/customized' element={user ? <Customized /> : <Navigate to={'/signin'} />} />
+        <Route path='/assistant-name' element={user ? <AsistantName /> : <Navigate to={'/signin'} />} />
       </Routes>
     </div>
   )

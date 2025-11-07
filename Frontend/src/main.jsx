@@ -8,13 +8,13 @@ import { AuthProvider } from './context/AuthContext.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <AuthProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <AuthProvider>
         <App />
         <Toaster
           position="bottom-left"
           toastOptions={{
-            duration: 3000,
+            duration: 4000,
             style: {
               background: "#1e1e2f",
               color: "#fff",
@@ -22,7 +22,7 @@ createRoot(document.getElementById('root')).render(
             },
           }}
         />
-      </BrowserRouter>
-    </AuthProvider>
+      </AuthProvider>
+    </BrowserRouter>
   </StrictMode>,
 )

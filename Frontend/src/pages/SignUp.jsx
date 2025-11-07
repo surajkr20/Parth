@@ -2,7 +2,7 @@ import React, { useContext, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
-import videoBg from "../../public/parth_bg.mp4";
+import videoBg from "../../public/signin_bg.mp4";
 import { AuthContext } from "../context/AuthContext";
 
 const SignUp = () => {

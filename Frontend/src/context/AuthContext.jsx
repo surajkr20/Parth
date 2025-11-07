@@ -14,6 +14,9 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+    const [frontendImage, setFrontendImage] = useState(null);
+    const [backendImage, setBackendImage] = useState(null);
+    const [selectedImage, setSelectedImage] = useState(null);
 
     const serverUrl = "http://localhost:3000";
 
@@ -98,7 +101,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, signup, login, logout, error, serverUrl }}>
+        <AuthContext.Provider value={{ user, loading, signup, login, logout, error, serverUrl, frontendImage, setFrontendImage, backendImage, setBackendImage, selectedImage, setSelectedImage }}>
             {children}
         </AuthContext.Provider>
     )
