@@ -1,88 +1,164 @@
-## 🧠 **Virtual Assistant (Parth) – Backend**
 
-### 📌 **Project Overview**
+## 🧠 **Virtual Assistant (Parth)**
 
-**Parth** is an intelligent virtual assistant built using the **MERN Stack**, designed to handle user chat commands, voice instructions, and personalized AI interactions.
-This stage of the project focuses on **backend authentication APIs** — implementing secure signup, login, and logout functionality.
+An AI-powered virtual assistant built using the **MERN Stack**, capable of handling **user authentication, protected routes, and personalized AI interactions**.
 
 ---
 
 ### ⚙️ **Tech Stack**
 
-- **Node.js** – Backend runtime
-- **Express.js** – Server framework
-- **MongoDB** – Database for storing user data
-- **JWT (JSON Web Tokens)** – Authentication and session management
-- **bcrypt.js** – Password hashing
+**Frontend**
+
+* React (Vite)
+* React Router DOM
+* Context API (for global auth state)
+* TailwindCSS
+
+**Backend**
+
+* Node.js
+* Express.js
+* MongoDB (Mongoose)
+* JWT (JSON Web Token)
+* bcrypt.js
+* Multer (file uploads)
+* Cloudinary (image storage)
 
 ---
 
 ### 📁 **Project Structure**
 
+#### 🖥️ **Frontend**
+
+```
+Frontend/
+├── public/
+├── src/
+│   ├── context/
+│   │   └── AuthContext.jsx       # Global auth state and user provider
+│   │
+│   ├── pages/                    # React page components
+│   │   ├── Home.jsx
+│   │   ├── SignIn.jsx
+│   │   ├── SignUp.jsx
+│   │   └── Customized.jsx
+│   │
+│   ├── App.jsx                   # App routes and protected routes
+│   ├── main.jsx                  # Entry file
+│   ├── index.css
+│   └── ...
+│
+├── package.json
+├── tailwind.config.js
+└── vite.config.js
+```
+
+#### ⚙️ **Backend**
+
 ```
 Backend/
 ├── config/
-│   ├── db.js             # MongoDB connection setup
-│   └── token.js          # JWT token utilities
+│   ├── cloudinary.js      # Cloudinary setup
+│   ├── db.js              # MongoDB connection
+│   └── token.js           # JWT utilities
 │
 ├── controllers/
-│   └── auth.controller.js # Signup, login, logout controllers
+│   ├── auth.controller.js # Signup, login, logout
+│   └── user.controller.js # Profile, user data handling
 │
-├── middlewares/          # (for future use – auth, validation)
+├── middlewares/
+│   ├── isAuth.js          # JWT verification middleware
+│   └── multer.js          # File upload handling
 │
 ├── models/
-│   └── user.model.js      # Mongoose user schema
+│   └── user.model.js      # Mongoose schema
 │
 ├── routes/
-│   └── auth.routes.js     # Authentication routes
+│   ├── auth.routes.js     # Auth-related routes
+│   └── user.routes.js     # Protected user routes
 │
-├── index.js               # Entry point – server & route setup
-│
-├── .env                   # Environment variables
-├── package.json
-└── Readme.md
+├── public/                # Static files
+├── index.js               # Server entry point
+├── .env
+└── package.json
 ```
 
 ---
 
+### 🚀 **How to Run Locally**
 
-### 🧩 **How to Run Locally**
+#### 1️⃣ Clone the repository
 
 ```bash
-# 1️⃣ Clone this repository
 git clone https://github.com/<your-username>/VirtualAssistant.git
+```
 
-# 2️⃣ Navigate to the backend folder
+#### 2️⃣ Setup Backend
+
+```bash
 cd VirtualAssistant/Backend
-
-# 3️⃣ Install dependencies
 npm install
+```
 
-# 4️⃣ Add your environment variables in .env file
+Create a `.env` file in the `Backend/` folder:
+
+```bash
 MONGO_URI=<your_mongodb_connection_string>
 JWT_SECRET=<your_secret_key>
+CLOUDINARY_NAME=<cloudinary_cloud_name>
+CLOUDINARY_API_KEY=<api_key>
+CLOUDINARY_API_SECRET=<api_secret>
 PORT=5000
+```
 
-# 5️⃣ Start the development server
+Start the backend:
+
+```bash
 npm run dev
+```
+
+---
+
+#### 3️⃣ Setup Frontend
+
+```bash
+cd ../Frontend
+npm install
+npm run dev
+```
 
 ---
 
 ### 🔐 **Authentication API Endpoints**
 
-| Method   | Endpoint           | Description          |
-| -------- | ------------------ | -------------------- |
-| **POST** | `/api/auth/signup` | Register a new user  |
-| **POST** | `/api/auth/login`  | Log in existing user |
-| **POST** | `/api/auth/logout` | Log out current user |
+| Method | Endpoint           | Description               | Access  |
+| ------ | ------------------ | ------------------------- | ------- |
+| POST   | `/api/auth/signup` | Register a new user       | Public  |
+| POST   | `/api/auth/login`  | Login user                | Public  |
+| POST   | `/api/auth/logout` | Logout user               | Private |
+| GET    | `/api/user/me`     | Get authenticated user    | Private |
+| PUT    | `/api/user/update` | Update user details/image | Private |
 
 ---
 
-### ✅ **Current Progress**
+### 🧩 **Frontend Protected Routes**
 
-- [x] Project structure setup
-- [x] MongoDB connection established
-- [x] User model created
-- [x] Signup, login, and logout controllers implemented
-- [x] Routes integrated in `index.js`
-- [x] Basic debugging completed
+* Implemented using React Router DOM’s `<Navigate>` and `useContext` hooks.
+* `AuthContext` stores:
+
+  * `user`, `setUser`
+  * `loading`, `error`
+  * Functions like `login`, `logout`, and `fetchUser`.
+* Unauthorized users are automatically redirected to **SignIn** page.
+
+---
+
+### 🛠️ **Middlewares**
+
+| Middleware  | Purpose                                              |
+| ----------- | ---------------------------------------------------- |
+| `isAuth.js` | Verifies JWT token before accessing protected routes |
+| `multer.js` | Handles image upload for user profile                |
+| `token.js`  | Generates and verifies JWT tokens                    |
+
+
