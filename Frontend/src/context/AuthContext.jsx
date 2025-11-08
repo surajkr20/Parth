@@ -87,13 +87,12 @@ export const AuthProvider = ({ children }) => {
     // 🧩 logout function
     const logout = async () => {
         try {
-            setLoading(true);
-            setError(null);
             await axios.post("http://localhost:3000/api/auth/logout", {}, { withCredentials: true });
             setUser(null);
-            navigate("/signin")
             toast.success("Logged out");
+            navigate("/signin");
         } catch (err) {
+            setUser(null);
             const msg = err.response?.data?.message || "logout failed!";
             setError(msg);
             toast.error(msg);
@@ -101,7 +100,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, signup, login, logout, error, serverUrl, frontendImage, setFrontendImage, backendImage, setBackendImage, selectedImage, setSelectedImage, setUser }}>
+        <AuthContext.Provider value={{ user, loading, signup, login, logout, error, serverUrl, frontendImage, setFrontendImage, backendImage, setBackendImage, selectedImage, setSelectedImage, setUser, setLoading }}>
             {children}
         </AuthContext.Provider>
     )

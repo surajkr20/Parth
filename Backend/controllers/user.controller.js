@@ -16,15 +16,15 @@ export const getCurrentUser = async(req, res) =>{
 
 export const updateAssistant = async(req, res) =>{
     try {
-        const {assistantName, imageUrl} = req.body;
-        let assistantImage;
+        const {assistantName, assistantImage} = req.body;
+        let finalImage;
         if(req.file){
-            assistantImage = await uploadOnCloudinary(req.file.path);
+            finalImage = await uploadOnCloudinary(req.file.path);
         }else{
-            assistantImage = imageUrl;
+            finalImage = assistantImage;
         }
         const user = await userModel.findByIdAndUpdate(req.userId, {
-            assistantName, assistantImage
+            assistantName, assistantImage: finalImage
         }, {new: true}).select("-password");
         return res.status(200).json(user);
     } catch (error) {

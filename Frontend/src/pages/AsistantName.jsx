@@ -5,12 +5,13 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { IoArrowBackCircle } from "react-icons/io5";
 
-export const AsistantName = () => {
-  const { serverUrl, user, selectedImage, backendImage, setUser, loading } = useContext(AuthContext);
+const AsistantName = () => {
+  const { serverUrl, user, selectedImage, backendImage, setUser, loading, setLoading } = useContext(AuthContext);
   const [assistantName, setAssistantName] = useState(user?.AsistantName || "");
   const navigate = useNavigate();
 
   const handleUpdateAssistant = async () => {
+    setLoading(true);
     try {
       const formData = new FormData();
       formData.append("assistantName", assistantName);
@@ -27,9 +28,13 @@ export const AsistantName = () => {
           "Content-Type": "multipart/form-data",
         },
       });
+      setLoading(false);
       setUser(res.data);
-      toast.success("Assistant profile Generated")
+      console.log("Updated user:", res.data);
+      navigate("/");
+      toast.success("Assistant profile updated")
     } catch (error) {
+      setLoading(false);
       console.log("assistant update error:", error);
       toast.success(error.response.data.message);
     }
@@ -45,7 +50,10 @@ export const AsistantName = () => {
 
       {assistantName && <button className="w-[200px] bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 transition duration-200 rounded-2xl" disabled={loading} onClick={() => {
         handleUpdateAssistant();
+        navigate("/")
       }}>{!loading? "Create your assistant" : "Loading.."}</button>}
     </div>
   )
 }
+
+export default AsistantName;
