@@ -5,6 +5,6 @@ import isAuth from "../middlewares/isAuth.js";
 import upload from "../middlewares/multer.js";
 
 userRouter.get('/me', isAuth, getCurrentUser);
-userRouter.get('/update', isAuth, upload.single("assistantImage"), updateAssistant);
+userRouter.post('/update', isAuth, upload.single("assistantImage"), updateAssistant);
 
 export default userRouter;

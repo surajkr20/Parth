@@ -6,7 +6,7 @@ export const uploadOnCloudinary = async (FilePath) => {
   cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.API_SECRET,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
   });
 
   // Upload an image
@@ -16,7 +16,8 @@ export const uploadOnCloudinary = async (FilePath) => {
     return uploadResult.secure_url;
   } catch (error) {
     fs.unlinkSync(FilePath);
-    return res.status(500).json({message: `cloudinary error ${error}`})
+    console.error("Cloudinary upload error:", error);
+    throw error;
   }
 };
 

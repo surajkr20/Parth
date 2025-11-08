@@ -13,10 +13,10 @@ const App = () => {
     <div>
       <Routes>
         <Route path='/' element={(user?.assistantImage && user?.assistantName) ? <Home /> : <Navigate to={"/customized"} />} />
-        <Route path='/signup' element={!user ? <SignUp /> : <Navigate to={'/'} />} />
+        <Route path='/signup' element={!user ? <SignUp /> : <Navigate to={'/customized'} />} />
         <Route path='/signin' element={!user ? <SignIn /> : <Navigate to={'/'} />} />
-        <Route path='/customized' element={user ? <Customized /> : <Navigate to={'/signin'} />} />
-        <Route path='/assistant-name' element={user ? <AsistantName /> : <Navigate to={'/signin'} />} />
+        <Route path='/customized' element={user ? <Customized /> : <Navigate to={'/signup'} />} />
+        <Route path='/assistant-name' element={user ? <AsistantName /> : <Navigate to={'/signup'} />} />
       </Routes>
     </div>
   )
