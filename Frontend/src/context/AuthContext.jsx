@@ -40,6 +40,17 @@ export const AuthProvider = ({ children }) => {
         fetchAuthenticatedUser();
     }, []);
 
+    const getGeminiResponse = async (command) =>{
+        try {
+            const result = await axios.post(`${serverUrl}/api/user/asktoassistant`, {command}, {
+                withCredentials: true
+            })
+            return result.data;
+        } catch (error) {
+            console.error("getGeminiResponse error: ", error)
+        }
+    }
+
     // 🧩 signup function
     const signup = async (data) => {
         try {
@@ -100,7 +111,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, signup, login, logout, error, serverUrl, frontendImage, setFrontendImage, backendImage, setBackendImage, selectedImage, setSelectedImage, setUser, setLoading }}>
+        <AuthContext.Provider value={{ user, loading, signup, login, logout, error, serverUrl, frontendImage, setFrontendImage, backendImage, setBackendImage, selectedImage, setSelectedImage, setUser, setLoading, getGeminiResponse }}>
             {children}
         </AuthContext.Provider>
     )
