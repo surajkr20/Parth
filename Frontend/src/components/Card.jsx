@@ -9,7 +9,7 @@ const Card = ({ image }) => {
       setBackendImage(null);
       setFrontendImage(null);
     }}>
-      <img src={image} alt="assistant-img" className='h-full object-cover rounded-2xl p-1' />
+      <img src={image} alt="assistant-img" className='h-full w-full object-fill rounded-2xl p-1' />
     </div>
   )
 }

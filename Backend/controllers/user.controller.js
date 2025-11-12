@@ -49,6 +49,8 @@ export const askToAssistant = async (req, res) => {
   try {
     const { command } = req.body;
     const user = await userModel.findById(req.userId);
+    user.chatHistory.push(command);
+    user.save();
     const userName = user.name;
     const assistantImage = user.assistantImage;
     const assistantName = user.assistantName;

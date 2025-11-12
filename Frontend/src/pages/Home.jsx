@@ -4,6 +4,8 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { AuthContext } from "../context/AuthContext.jsx";
 import { useNavigate } from 'react-router-dom';
+import { GiHamburgerMenu } from "react-icons/gi";
+import { RxCross2 } from "react-icons/rx";
 
 const Home = () => {
   const { user, logout, getGeminiResponse } = useContext(AuthContext);
@@ -15,9 +17,13 @@ const Home = () => {
   const recognitionRef = useRef(null);
   const fallbackIntervalRef = useRef(null);
   const synthRef = useRef(window.speechSynthesis);
+  const [userText, setUserText] = useState("");
+  const [aiText, setAiText] = useState("");
+  const [ham, setHam] = useState(false);
 
   // Start recognition safely (shared)
   const safeStartRecognition = async () => {
+    if (!user) return;
     const recognition = recognitionRef.current;
     if (!recognition) return;
     if (isRecognizingRef.current || isSpeakingRef.current) return;
@@ -149,6 +155,7 @@ const Home = () => {
 
   // Initialize SpeechRecognition and handlers
   const startAssistant = () => {
+    if (!user) return;
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
       console.error("SpeechRecognition not supported in this browser.");
@@ -204,6 +211,8 @@ const Home = () => {
       if (user?.assistantName && transcript.toLowerCase().includes(user.assistantName.toLowerCase())) {
         // stop recognition so we don't get more results while handling
         try {
+          setAiText("");
+          setUserText(transcript);
           recognition.stop();
         } catch (err) {
           console.log("error stopping recognition before handling:", err);
@@ -215,6 +224,8 @@ const Home = () => {
           const data = await getGeminiResponse(transcript);
           console.log("Gemini response:", data);
           handleCommand(data);
+          setAiText(data.response);
+          setUserText("");
         } catch (err) {
           console.error("Error fetching Gemini response:", err);
           AssistantSpeak("Sorry, something went wrong while processing that.");
@@ -249,8 +260,10 @@ const Home = () => {
     let cleanupFn = null;
     const init = async () => {
       try {
-        await navigator.mediaDevices.getUserMedia({ audio: true });
-        cleanupFn = startAssistant();
+        if (user) {
+          await navigator.mediaDevices.getUserMedia({ audio: true });
+          cleanupFn = startAssistant();
+        }
       } catch (err) {
         console.error("Mic permission denied or error:", err);
       }
@@ -268,44 +281,129 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="w-full h-screen bg-gradient-to-t from-black to-[#070731] flex flex-col items-center justify-center px-6 text-center">
-      <div className='absolute flex md:flex-col to top-[40px] items-center md:right-6 gap-4'>
-        <button className="md:w-[200px] w-[120px] bg-red-800 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg transition duration-200" onClick={logout}>Logout</button>
-        <button className="md:w-[200px] w-[120px] bg-green-800 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg transition duration-200" onClick={() => navigate("/customized")}>Update Assistant</button>
+    <div className="min-h-screen w-full bg-gradient-to-t from-black to-[#070731] flex flex-col items-center justify-center px-4 py-6 relative">
+      {/* buttons for update and logout with responsiveness according to the screen sizes */}
+      <div className="md:absolute md:top-4 top-10 right-4 flex items-center gap-6 md:z-10 mb-10 md:mb-0">
+        {/* Hamburger Icon for small screens */}
+        <GiHamburgerMenu
+          className="absolute top-8 right-8 text-white text-4xl md:hidden cursor-pointer"
+          onClick={() => setHam(true)}
+        />
+
+        {/* Mobile Menu - show only when ham is true */}
+        {ham && (
+          <div className="absolute top-0 left-0 w-full h-full bg-[#00000090] backdrop-blur-lg overflow-hidden p-10 flex flex-col gap-8 z-50">
+            <RxCross2
+              className="text-white text-4xl md:hidden cursor-pointer self-end"
+              onClick={() => setHam(false)}
+            />
+
+            <div className="flex flex-col gap-4 mt-6">
+              <button
+                className="w-full bg-red-800 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg transition duration-200"
+                onClick={logout}
+              >
+                Logout
+              </button>
+              <button
+                className="w-full bg-green-800 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg transition duration-200"
+                onClick={() => {
+                  setHam(false)
+                  navigate('/customized')
+                }}
+              >
+                Update Assistant
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto">
+              <h1 className="text-gray-100 border-b-2 text-xl pb-1">History</h1>
+              <div className="w-full h-[60%] mt-4 flex flex-col gap-3">
+                {user.chatHistory && user.chatHistory.length > 0 ? (
+                  user.chatHistory.map((his, i) => (
+                    <span key={i} className="text-white text-sm truncate">
+                      {his}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-gray-400 text-sm">No chat history</span>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Buttons for medium and large screens */}
+        <button
+          className="w-[120px] md:w-[150px] bg-red-800 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg transition duration-200 hidden md:block"
+          onClick={logout}
+        >
+          Logout
+        </button>
+        <button
+          className="w-[120px] md:w-[150px] bg-green-800 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg transition duration-200 text-sm p-1 hidden md:block"
+          onClick={() => navigate('/customized')}
+        >
+          Update Assistant
+        </button>
       </div>
-      <div className="flex flex-col md:flex-row gap-10 items-center justify-center">
+
+      {/* Main Content */}
+      <div className="flex flex-col md:flex-row items-center justify-center md:gap-16 gap-6 text-center md:text-left">
         {/* Assistant Image */}
-        <div className="w-[250px] h-[250px] md:w-[300px] md:h-[300px] border border-white rounded-2xl p-2 overflow-hidden shadow-lg">
+        <div className="w-[250px] sm:w-[280px] md:w-[300px] h-[320px] sm:h-[340px] md:h-[350px] bg-[#02020a] border-2 border-blue-300 rounded-2xl overflow-hidden hover:shadow-md cursor-pointer">
           <img
             src={user?.assistantImage}
             alt={user?.assistantName}
-            className="w-full h-full object-cover rounded-xl"
+            className="w-full h-full object-fill rounded-2xl p-1"
           />
         </div>
 
         {/* Assistant Info */}
-        <div className="flex flex-col gap-4 items-center justify-center max-w-md">
-          <h1 className="text-white text-3xl md:text-4xl font-serif leading-snug">
-            Hii, I'm{" "}
-            <span className="text-orange-400 font-semibold text-4xl md:text-5xl">
+        <div className="flex flex-col items-center md:items-start justify-center max-w-[90%] md:max-w-md gap-4">
+          <h1 className="text-white text-2xl sm:text-3xl md:text-4xl font-serif leading-snug">
+            Hello, I'm{' '}
+            <span className="font-semibold text-gray-200">
               {user?.assistantName}
             </span>
             <br />
-            <span className="text-red-400 text-xl md:text-2xl font-light font-mono">
+            <span className="text-red-400 text-base sm:text-lg md:text-2xl font-light font-serif">
               your AI-powered Virtual Assistant
             </span>
           </h1>
 
-          <p className="text-white text-sm md:text-base border border-white p-3 rounded-2xl leading-relaxed bg-white/5">
-            Give me a command (voice or text) starting with my name.
-            <br />
+          {/* GIFs */}
+          {aiText ? (
+            <img
+              src="https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3bGF0emd3NWF3Z2txdTdsbHNyb2Y0Znhzazl2MnVubXZzeXRpN2lsMCZlcD12MV9naWZzX3JlbGF0ZWQmY3Q9cw/UZZF0KnGHpJvnQumU6/giphy.gif"
+              className="w-[200px] h-[100px] rounded-md"
+              alt="Speaking animation"
+            />
+          ) : (
+            <img
+              src="https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3aGZwMnRqeXR2NWt6emY0c2V2bWJjaW9heHo4Mjh4cHd2NGF1cDU3bSZlcD12MV9naWZzX3JlbGF0ZWQmY3Q9cw/aeKRSmORI8OBiYExvF/giphy.gif"
+              className="w-[200px] h-[100px] sm:w-[200px] rounded-md"
+              alt="Idle animation"
+            />
+          )}
+
+          {/* Instruction Text */}
+          <p className="text-white text-xs sm:text-sm border border-white p-3 rounded-2xl leading-relaxed bg-white/5">
             <span className="italic text-orange-300">
-              e.g., Parth – search "Aaj Ki Raat" song on YouTube
+              {userText
+                ? userText
+                : 'Give any voice command starting with my name e.g., Jack "open YouTube", "what is JS", or "search on Google: today’s weather"'}
             </span>
           </p>
+
+          {/* AI Response */}
+          <h1 className="text-white mt-2 text-sm sm:text-base md:text-lg">
+            {aiText ? aiText : 'waiting for your command..'}
+          </h1>
         </div>
       </div>
     </div>
+
   );
 }
 

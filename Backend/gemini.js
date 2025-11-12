@@ -33,7 +33,7 @@ const geminiResponse = async (command, assistantName, userName) => {
 
         ### Type meanings:
 
-        - "general" → user is asking any factual/informational question.  
+        - "general" → user is asking any factual/informational question. and agar kisi question ka answer tumhe pta h to use bhi "general" catagory me hi rkho bs answer short me dena
         - "google_search" → search something on Google.  
         - "youtube_search" → search something on YouTube.  
         - "youtube_play" → directly play a video or song.  

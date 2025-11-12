@@ -2,6 +2,8 @@ import React, { useContext, useRef } from 'react';
 import Card from '../components/Card';
 import Assistant from "../assets/assistant.png";
 import Assistant2 from "../assets/assistant2.jpeg";
+// import Assistant3 from "../assets/assistant3.jpeg";
+import Assistant4 from "../assets/assistant4.jpeg";
 import { MdDriveFolderUpload } from "react-icons/md";
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -24,6 +26,8 @@ const Customized = () => {
       <div className='w-full max-w-[60%] flex items-center justify-center gap-6 flex-wrap'>
         <Card image={Assistant} />
         <Card image={Assistant2} />
+        {/* <Card image={Assistant3} /> */}
+        <Card image={Assistant4} />
 
         <div className={`w-[100px] h-[120px] md:w-[200px] md:h-[250px] bg-[#02020a] border-2 border-[#272747] rounded-2xl overflow-hidden shadow-lg hover:shadow-md cursor-pointer flex items-center justify-center ${selectedImage == "input" ? "border-4 border-white shadow-2xl shadow-blue-900" : null}`}
           onClick={()=>{
