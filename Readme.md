@@ -147,7 +147,7 @@ npm run dev
 
 ### 🌐 **Demo**
 
-*Coming soon — project deployment in progress.*
+[Live Demo](https://parth-virtualassistant.onrender.com/signup)
 
 Connect with me on
 🔗 [LinkedIn](https://www.linkedin.com/in/suraj-kumar-5b48b9254/) | 🐦 [Twitter](https://x.com/Abhinav_Suraj02)
