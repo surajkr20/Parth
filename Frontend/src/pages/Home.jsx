@@ -19,6 +19,7 @@ const Home = () => {
   const recognitionRef = useRef(null);
   const fallbackIntervalRef = useRef(null);
   const synthRef = useRef(window.speechSynthesis);
+  const hasGreetedRef = useRef(false);
   const [userText, setUserText] = useState("");
   const [aiText, setAiText] = useState("");
   const [ham, setHam] = useState(false);
@@ -232,7 +233,6 @@ const Home = () => {
 
         try {
           const data = await getGeminiResponse(transcript);
-          console.log("Gemini response:", data);
           handleCommand(data);
           setAiText(data.response);
           setUserText("");
@@ -253,9 +253,12 @@ const Home = () => {
     // start initially
     setTimeout(() => safeStartRecognition(), 300);
 
-    const greetings = new SpeechSynthesisUtterance(`Hello ${user.name}, what can i help you`);
-    greetings.lang = "hi-IN";
-    window.speechSynthesis.speak(greetings);
+    if(!hasGreetedRef.current){
+      const greetings = new SpeechSynthesisUtterance(`Hello ${user.name}, what can i help you`);
+      greetings.lang = "hi-IN";
+      window.speechSynthesis.speak(greetings);
+      hasGreetedRef.current = true;
+    }
 
     // cleanup
     return () => {
