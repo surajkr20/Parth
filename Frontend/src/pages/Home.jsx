@@ -6,6 +6,8 @@ import { AuthContext } from "../context/AuthContext.jsx";
 import { useNavigate } from 'react-router-dom';
 import { GiHamburgerMenu } from "react-icons/gi";
 import { RxCross2 } from "react-icons/rx";
+import inputvoice from "../assets/inputvoice.gif";
+import GoogleListenAnimation from "../components/GoogleListenAnimation.jsx";
 
 const Home = () => {
   const { user, logout, getGeminiResponse } = useContext(AuthContext);
@@ -251,6 +253,10 @@ const Home = () => {
     // start initially
     setTimeout(() => safeStartRecognition(), 300);
 
+    const greetings = new SpeechSynthesisUtterance(`Hello ${user.name}, what can i help you`);
+    greetings.lang = "hi-IN";
+    window.speechSynthesis.speak(greetings);
+
     // cleanup
     return () => {
       try {
@@ -388,11 +394,7 @@ const Home = () => {
               alt="Speaking animation"
             />
           ) : (
-            <img
-              src="https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3aGZwMnRqeXR2NWt6emY0c2V2bWJjaW9heHo4Mjh4cHd2NGF1cDU3bSZlcD12MV9naWZzX3JlbGF0ZWQmY3Q9cw/aeKRSmORI8OBiYExvF/giphy.gif"
-              className="w-[200px] h-[100px] sm:w-[200px] rounded-md"
-              alt="Idle animation"
-            />
+            <div><GoogleListenAnimation /></div>
           )}
 
           {/* Instruction Text */}
@@ -400,7 +402,7 @@ const Home = () => {
             <span className="italic text-orange-300">
               {userText
                 ? userText
-                : 'Give any voice command starting with my name e.g., Jack "open YouTube", "what is JS", or "search on Google: today’s weather"'}
+                : 'Give your voice command starting with my AssistantName!"'}
             </span>
           </p>
 
