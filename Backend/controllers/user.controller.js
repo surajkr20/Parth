@@ -93,6 +93,8 @@ export const askToAssistant = async (req, res) => {
       case "instagram_open":
       case "youtube_play":
       case "facebook_open":
+      case "linkedin_open":
+      case "twitter_open":
       case "weather_show":
       case "calculator_open":
       case "project_summary":

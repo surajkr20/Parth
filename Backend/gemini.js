@@ -39,7 +39,9 @@ const geminiResponse = async (command, assistantName, userName) => {
         - "youtube_play" → directly play a video or song.  
         - "calculator_open" → open calculator.  
         - "instagram_open" → open Instagram.  
-        - "facebook_open" → open Facebook.  
+        - "facebook_open" → open Facebook. 
+        - "linkedin_open" → open Linkedin.
+        - "twitter_open" → open twitter(X).
         - "weather_show" → user wants to know the weather.  
         - "get_time" → ask for current time.  
         - "get_date" → ask for today’s date.  

@@ -137,6 +137,14 @@ const Home = () => {
         window.open("https://www.facebook.com", "_blank");
         break;
 
+      case "linkedin_open":
+        window.open("https://www.linkedin.com/feed/", "_blank");
+        break;
+
+      case "twitter_open":
+        window.open("https://x.com/home", "_blank");
+        break;
+
       case "weather_show": {
         const query = encodeURIComponent(userInput || "weather near me");
         window.open(`https://www.google.com/search?q=${query}`, "_blank");
