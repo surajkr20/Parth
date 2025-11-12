@@ -214,7 +214,6 @@ const Home = () => {
     recognition.onresult = async (e) => {
       const last = e.results[e.results.length - 1];
       const transcript = (last[0] && last[0].transcript) ? last[0].transcript.trim() : '';
-      console.log("speech result:", transcript);
 
       if (!transcript) return;
 

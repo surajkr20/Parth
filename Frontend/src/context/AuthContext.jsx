@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
     const [backendImage, setBackendImage] = useState(null);
     const [selectedImage, setSelectedImage] = useState(null);
 
-    const serverUrl = "http://localhost:3000";
+    const serverUrl = "https://parth-backend.onrender.com";
 
     useEffect(() => {
         const fetchAuthenticatedUser = async () => {
@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }) => {
         try {
             setLoading(true);
             setError(null);
-            const res = await axios.post("http://localhost:3000/api/auth/signup", data, {
+            const res = await axios.post(`${serverUrl}/api/auth/signup`, data, {
                 headers: { "Content-Type": "application/json" },
                 withCredentials: true,
             });
@@ -78,7 +78,7 @@ export const AuthProvider = ({ children }) => {
         try {
             setLoading(true);
             setError(null);
-            const res = await axios.post("http://localhost:3000/api/auth/login", data, {
+            const res = await axios.post(`${serverUrl}/api/auth/login`, data, {
                 headers: { "Content-Type": "application/json" },
                 withCredentials: true,
             });
@@ -98,7 +98,7 @@ export const AuthProvider = ({ children }) => {
     // 🧩 logout function
     const logout = async () => {
         try {
-            await axios.post("http://localhost:3000/api/auth/logout", {}, { withCredentials: true });
+            await axios.post(`${serverUrl}/api/auth/logout`, {}, { withCredentials: true });
             setUser(null);
             toast.success("Logged out");
             navigate("/signin");
